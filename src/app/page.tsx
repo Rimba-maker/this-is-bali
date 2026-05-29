@@ -5,6 +5,7 @@ import AboutSection from '@/components/landing/AboutSection'
 import FoodGallery from '@/components/landing/FoodGallery'
 import ReviewsSection from '@/components/landing/ReviewsSection'
 import LocationSection from '@/components/landing/LocationSection'
+import FAQSection from '@/components/landing/FAQSection'
 import Footer from '@/components/landing/Footer'
 
 export default function Home() {
@@ -18,6 +19,7 @@ export default function Home() {
         <FoodGallery />
         <ReviewsSection />
         <LocationSection />
+        <FAQSection />
       </main>
       <Footer />
     </>
