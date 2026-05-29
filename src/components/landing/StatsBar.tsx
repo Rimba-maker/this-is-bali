@@ -39,11 +39,11 @@ function SparkleIcon() {
 }
 
 const STATS = [
-  { Icon: StarIcon,    label: '15,000+ Five-Star Reviews' },
-  { Icon: TrophyIcon, label: 'Award Winning Service' },
-  { Icon: MenuIcon,   label: 'Viral Interactive Stamp Menu' },
-  { Icon: LeafIcon,   label: 'Floating Tables' },
-  { Icon: SparkleIcon,label: '4.9 Star Rating' },
+  { Icon: StarIcon,    label: '15,000+ Five-Star Google Reviews' },
+  { Icon: TrophyIcon, label: 'Multiple Award Winner' },
+  { Icon: MenuIcon,   label: 'The Legendary Stamp Menu' },
+  { Icon: LeafIcon,   label: 'Iconic Floating Tables' },
+  { Icon: SparkleIcon,label: '4.9★ Highest Rated in Ubud' },
 ]
 
 export default function StatsBar() {

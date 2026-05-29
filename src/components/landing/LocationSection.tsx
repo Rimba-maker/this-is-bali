@@ -23,7 +23,7 @@ function ChatIcon() {
 const ITEMS = [
   { Icon: PinIcon,  label: 'Address',               text: 'Jl. Monkey Forest No.06\nUbud, Gianyar, Bali 80571' },
   { Icon: ClockIcon,label: 'Opening Hours',          text: 'Daily · 11:00 AM – 11:00 PM', note: 'Kitchen closes at 10:30 PM' },
-  { Icon: ChatIcon, label: 'WhatsApp Reservation',   text: 'For groups of 10+ guests, contact us directly via WhatsApp.' },
+  { Icon: ChatIcon, label: 'Group Bookings',   text: 'Planning a group visit? Message us on WhatsApp and we\'ll arrange the best experience for your party.' },
 ]
 
 export default function LocationSection() {
@@ -62,20 +62,16 @@ export default function LocationSection() {
 
           {/* Map */}
           <div className="loc-map">
-            <div className="loc-map__placeholder">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
-              </svg>
-              <p>Jl. Monkey Forest No.06, Ubud</p>
-              <a
-                href="https://maps.google.com/?q=Jl+Monkey+Forest+No+06+Ubud+Bali"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="loc-btn loc-btn--wire"
-              >
-                Open in Google Maps
-              </a>
-            </div>
+            <iframe
+              src="https://maps.google.com/maps?q=-8.5081513,115.2642473&z=17&output=embed"
+              width="100%"
+              height="400"
+              style={{ border: 0, display: 'block' }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="THIS IS BALI — Jl. Monkey Forest No.06, Ubud on Google Maps"
+            />
           </div>
         </div>
       </div>
@@ -201,23 +197,6 @@ export default function LocationSection() {
           border-radius: 12px;
           overflow: hidden;
           box-shadow: 0 0 0 1px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.10);
-        }
-        .loc-map__placeholder {
-          width: 100%;
-          min-height: 320px;
-          background: linear-gradient(135deg, #2D4A2D 0%, #1a2e1a 100%);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 0.75rem;
-          color: rgba(255,255,255,0.60);
-          text-align: center;
-          padding: 2rem;
-        }
-        .loc-map__placeholder p {
-          font-size: 0.875rem;
-          margin: 0;
         }
       `}</style>
     </section>

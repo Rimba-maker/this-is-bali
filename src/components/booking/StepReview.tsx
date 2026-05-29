@@ -46,8 +46,8 @@ export default function StepReview({ onBack }: { onBack: () => void }) {
 
   return (
     <div>
-      <h2 style={heading}>Review your booking</h2>
-      <p style={sub}>Everything look right? Confirm to secure your table.</p>
+      <h2 style={heading}>Here&apos;s your booking summary</h2>
+      <p style={sub}>All good? Confirm and your table is secured.</p>
 
       <div style={{ ...card, marginBottom: '2rem' }}>
         {[

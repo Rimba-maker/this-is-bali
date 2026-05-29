@@ -4,7 +4,7 @@ import { useBookingStore } from '@/store/bookingStore'
 import type { SeatingPreference } from '@/types'
 
 const OPTIONS: { value: SeatingPreference; emoji: string; title: string; desc: string }[] = [
-  { value: 'sky_table',      emoji: '🏔️', title: 'Sky Table',    desc: 'Most popular · Limited availability. Subject to availability on the day.' },
+  { value: 'sky_table',      emoji: '🏔️', title: 'Sky Table',    desc: 'Our most-requested spot. Book early — spaces fill fast.' },
   { value: 'garden',         emoji: '🌿', title: 'Garden Area',  desc: 'Tropical, open-air seating surrounded by lush greenery.' },
   { value: 'indoor',         emoji: '🪑', title: 'Indoor',       desc: 'Cozy, air-conditioned dining room — perfect for families.' },
   { value: 'no_preference',  emoji: '✨', title: 'No Preference', desc: 'Let us choose the best available spot for your group.' },
@@ -17,7 +17,7 @@ export default function StepPreference({ onNext, onBack }: { onNext: () => void;
   return (
     <div>
       <h2 style={heading}>Where would you like to sit?</h2>
-      <p style={sub}>Choose your preferred seating area — we&apos;ll do our best to accommodate you.</p>
+      <p style={sub}>Pick where you&apos;d like to sit — we&apos;ll do our best to make it happen.</p>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.875rem', marginBottom: '2.5rem' }}>
         {OPTIONS.map((opt) => {

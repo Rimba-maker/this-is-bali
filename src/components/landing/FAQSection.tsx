@@ -4,40 +4,40 @@ import { useState } from 'react'
 
 const FAQS = [
   {
-    q: 'What are your operating hours?',
-    a: "We're open daily from 11:00 AM to 11:00 PM. Last orders are accepted at 10:15 PM.",
+    q: 'What are your opening hours?',
+    a: 'We are open daily from 11:00 AM to 11:00 PM. Kitchen closes at 10:15 PM, so please plan accordingly.',
   },
   {
-    q: 'Do I need a reservation, or can I walk in?',
-    a: 'Walk-ins are always welcome! However, we highly recommend booking in advance — especially for weekends and peak hours — to secure your preferred seating.',
+    q: 'Do I need to book in advance?',
+    a: 'Walk-ins are welcome, but we strongly recommend reserving ahead — especially on weekends and evenings. Popular time slots and the Sky Table fill up quickly.',
   },
   {
     q: 'Is the food halal?',
-    a: 'Yes. All our suppliers are halal certified. No pork or lard is processed in our kitchen.',
+    a: 'Yes. All our suppliers are halal certified. No pork or lard is used or processed in our kitchen.',
   },
   {
-    q: 'Do you have vegetarian, vegan, or gluten-free options?',
-    a: 'Absolutely. Vegan-friendly and vegetarian selections are available throughout the menu. Gluten-free options include our Beef Rendang Bowl and Grilled Honey Chicken Bowl. All food is MSG-free with no preservatives or additives.',
+    q: 'Do you cater to vegetarian, vegan, or gluten-free diets?',
+    a: 'Yes. Vegan and vegetarian options are available throughout the menu. Gluten-free choices include our Beef Rendang Bowl and Grilled Honey Chicken Bowl. All food is MSG-free with no preservatives or additives.',
   },
   {
-    q: 'Can you help celebrate a special occasion?',
-    a: 'We love celebrating with you! Complimentary mini cakes are provided upon request for birthdays, honeymoons, and anniversaries. Let us know when booking.',
+    q: 'Can you help with a birthday or anniversary?',
+    a: 'Complimentary mini cakes are available upon request for birthdays, honeymoons, and anniversaries. Just mention it when you book.',
   },
   {
     q: 'Is there parking nearby?',
-    a: 'Street parking directly outside is limited. Public parking is available at Lapangan Astina Ubud (the soccer fields), approximately a 5-minute walk away.',
+    a: 'Street parking directly outside is limited. Public parking is available at Lapangan Astina Ubud (the soccer fields), about a 5-minute walk away.',
   },
   {
-    q: 'Is the restaurant accessible for elderly or wheelchair users?',
-    a: 'There are only 2 small steps at the entrance, which is manageable with assistance. Please contact us in advance and we will do our best to accommodate you.',
+    q: 'Is the restaurant accessible for elderly guests or wheelchair users?',
+    a: 'There are 2 small steps at the entrance, manageable with assistance. Contact us ahead of your visit and we will do our best to accommodate your needs.',
   },
   {
     q: 'Is there air conditioning?',
-    a: 'Yes, climate-controlled indoor dining is available for guests who prefer a cooler environment.',
+    a: 'Yes. Climate-controlled indoor seating is available for guests who prefer a cooler setting.',
   },
   {
     q: 'Are pets allowed?',
-    a: 'We love animals, but pets are not permitted inside the restaurant to ensure the comfort of all our guests.',
+    a: 'Pets are not permitted inside the restaurant, to ensure the comfort of all our guests.',
   },
 ]
 
@@ -50,10 +50,10 @@ export default function FAQSection() {
     <section className="faq-section">
       <div className="faq-container">
         <div className="faq-header">
-          <span className="faq-eyebrow">Got Questions?</span>
-          <h2 className="faq-title">Frequently Asked Questions</h2>
+          <span className="faq-eyebrow">Before You Visit</span>
+          <h2 className="faq-title">Common Questions</h2>
           <p className="faq-subtitle">
-            Everything you need to know before your visit.
+            Quick answers so you can plan your visit with confidence.
           </p>
         </div>
 

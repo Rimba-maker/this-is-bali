@@ -31,8 +31,8 @@ export default function StepPersonalInfo({ onNext, onBack }: { onNext: () => voi
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
-      <h2 style={heading}>Your details</h2>
-      <p style={sub}>We&apos;ll send your booking confirmation to these contacts.</p>
+      <h2 style={heading}>Almost there</h2>
+      <p style={sub}>Your confirmation goes straight to your WhatsApp.</p>
 
       {/* Full Name */}
       <div style={fieldWrap}>

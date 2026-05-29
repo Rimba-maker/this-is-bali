@@ -41,7 +41,7 @@ export default function FoodGallery() {
         <div className="gal-header">
           <span className="gal-eyebrow">Our Food</span>
           <h2 className="gal-title">Food that earns its reviews</h2>
-          <p className="gal-subtitle">Every dish is a love letter to Bali — plated with precision, remembered forever.</p>
+          <p className="gal-subtitle">Traditional recipes. Fresh ingredients. Zero MSG. This is Balinese food at its best.</p>
         </div>
 
         <div className="gal-grid">
@@ -64,7 +64,7 @@ export default function FoodGallery() {
         </div>
 
         <div className="gal-cta">
-          <a href="#" className="gal-btn">View Full Menu →</a>
+          <a href="#" className="gal-btn">See the Full Menu →</a>
         </div>
       </div>
 

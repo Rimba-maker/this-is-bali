@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, useCallback } from 'react'
+import GoogleIcon from '@/components/icons/GoogleIcon'
 
 const REVIEWS = [
   {
@@ -35,44 +36,52 @@ const REVIEWS = [
   },
 ]
 
-const GAP = 16 // px — matches CSS gap below
-
-function getVisible() {
-  if (typeof window === 'undefined') return 1
-  if (window.innerWidth >= 1024) return 3
-  if (window.innerWidth >= 640)  return 2
-  return 1
-}
+const SWIPE_THRESHOLD = 50 // px — minimum drag to trigger slide
 
 export default function ReviewsSection() {
-  const [current, setCurrent] = useState(0)
+  const [current, setCurrent]     = useState(0)
+  const [dragging, setDragging]   = useState(false)
+  const [dragDelta, setDragDelta] = useState(0)
+
   const trackRef   = useRef<HTMLDivElement>(null)
   const wrapRef    = useRef<HTMLDivElement>(null)
   const timerRef   = useRef<ReturnType<typeof setInterval> | null>(null)
+  const startXRef  = useRef(0)
+  const isDragging = useRef(false)
+
+  // Base transform for current slide
+  const baseOffset = useCallback((idx: number) => {
+    if (!wrapRef.current) return 0
+    return -(idx * wrapRef.current.offsetWidth)
+  }, [])
+
+  // Apply transform to track
+  const applyTransform = useCallback((px: number, animated: boolean) => {
+    if (!trackRef.current) return
+    trackRef.current.style.transition = animated
+      ? 'transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+      : 'none'
+    trackRef.current.style.transform = `translateX(${px}px)`
+  }, [])
 
   const slideTo = useCallback((idx: number) => {
-    if (!trackRef.current || !wrapRef.current) return
-    const vis     = getVisible()
-    const max     = Math.max(0, REVIEWS.length - vis)
-    const next    = Math.max(0, Math.min(idx, max))
-    const wrapW   = wrapRef.current.offsetWidth
-    const cardW   = (wrapW - GAP * (vis - 1)) / vis
-    const offset  = next * (cardW + GAP)
-    trackRef.current.style.transform = `translateX(${-offset}px)`
+    const next = Math.max(0, Math.min(idx, REVIEWS.length - 1))
     setCurrent(next)
-  }, [])
+    applyTransform(baseOffset(next), true)
+  }, [applyTransform, baseOffset])
 
   const startTimer = useCallback(() => {
     timerRef.current = setInterval(() => {
       setCurrent(c => {
-        const vis  = getVisible()
-        const max  = Math.max(0, REVIEWS.length - vis)
-        const next = c >= max ? 0 : c + 1
-        slideTo(next)
+        const next = c >= REVIEWS.length - 1 ? 0 : c + 1
+        if (wrapRef.current && trackRef.current) {
+          trackRef.current.style.transition = 'transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+          trackRef.current.style.transform = `translateX(${-(next * wrapRef.current.offsetWidth)}px)`
+        }
         return next
       })
     }, 5000)
-  }, [slideTo])
+  }, [])
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current)
@@ -80,10 +89,51 @@ export default function ReviewsSection() {
 
   useEffect(() => {
     startTimer()
-    const onResize = () => { slideTo(0) }
+    const onResize = () => slideTo(0)
     window.addEventListener('resize', onResize, { passive: true })
     return () => { stopTimer(); window.removeEventListener('resize', onResize) }
   }, [slideTo, startTimer, stopTimer])
+
+  // ── Pointer events (handles both mouse drag + touch swipe) ──
+
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    // Ignore right-click
+    if (e.button === 2) return
+    stopTimer()
+    isDragging.current = true
+    startXRef.current = e.clientX
+    setDragging(true)
+    setDragDelta(0)
+    ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
+  }, [stopTimer])
+
+  const onPointerMove = useCallback((e: React.PointerEvent) => {
+    if (!isDragging.current) return
+    const delta = e.clientX - startXRef.current
+    setDragDelta(delta)
+    // Real-time drag: no transition, offset = base + delta
+    applyTransform(baseOffset(current) + delta, false)
+  }, [applyTransform, baseOffset, current])
+
+  const onPointerUp = useCallback((e: React.PointerEvent) => {
+    if (!isDragging.current) return
+    isDragging.current = false
+    setDragging(false)
+
+    const delta = e.clientX - startXRef.current
+    setDragDelta(0)
+
+    if (Math.abs(delta) >= SWIPE_THRESHOLD) {
+      const next = delta < 0
+        ? Math.min(current + 1, REVIEWS.length - 1)
+        : Math.max(current - 1, 0)
+      slideTo(next)
+    } else {
+      // Snap back to current
+      applyTransform(baseOffset(current), true)
+    }
+    startTimer()
+  }, [current, slideTo, applyTransform, baseOffset, startTimer])
 
   return (
     <section id="reviews" className="rv-section">
@@ -97,14 +147,30 @@ export default function ReviewsSection() {
         {/* Carousel */}
         <div
           ref={wrapRef}
-          className="rv-viewport"
-          onMouseEnter={stopTimer}
-          onMouseLeave={startTimer}
+          className={`rv-viewport${dragging ? ' rv-viewport--dragging' : ''}`}
+          onMouseEnter={() => { if (!isDragging.current) stopTimer() }}
+          onMouseLeave={() => { if (!isDragging.current) startTimer() }}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
         >
           <div ref={trackRef} className="rv-track">
             {REVIEWS.map((r, i) => (
-              <div key={r.name} className="rv-card" role="group" aria-label={`Review ${i + 1} of ${REVIEWS.length}`}>
-                <div className="rv-card__stars" aria-label="5 stars">★★★★★</div>
+              <div
+                key={r.name}
+                className="rv-card"
+                role="group"
+                aria-label={`Review ${i + 1} of ${REVIEWS.length}`}
+                aria-hidden={i !== current}
+              >
+                <div className="rv-card__top">
+                  <div className="rv-card__stars" aria-label="5 out of 5 stars">★★★★★</div>
+                  <div className="rv-card__google">
+                    <GoogleIcon size={18} />
+                    <span>Google Review</span>
+                  </div>
+                </div>
                 <p className="rv-card__text">{r.text}</p>
                 <div className="rv-card__author">
                   <div className="rv-card__flag" aria-hidden="true">{r.flag}</div>
@@ -116,6 +182,14 @@ export default function ReviewsSection() {
               </div>
             ))}
           </div>
+
+          {/* Desktop drag hint — fades after first interaction */}
+          {!dragging && current === 0 && (
+            <div className="rv-drag-hint" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              drag or swipe
+            </div>
+          )}
         </div>
 
         {/* Dots */}
@@ -125,12 +199,16 @@ export default function ReviewsSection() {
               key={i}
               role="tab"
               aria-selected={i === current}
-              aria-label={`Go to review ${i + 1}`}
+              aria-label={`Review ${i + 1} — ${REVIEWS[i].name}`}
               className={`rv-dot${i === current ? ' rv-dot--active' : ''}`}
-              onClick={() => { stopTimer(); slideTo(i); }}
+              onClick={() => { stopTimer(); slideTo(i); startTimer() }}
             />
           ))}
         </div>
+
+        <p className="rv-counter" aria-live="polite">
+          {current + 1} / {REVIEWS.length}
+        </p>
       </div>
 
       <style>{`
@@ -142,7 +220,7 @@ export default function ReviewsSection() {
         @media (min-width: 768px) { .rv-section { padding: 6rem 0; } }
 
         .rv-container {
-          max-width: 1280px;
+          max-width: 860px;
           margin: 0 auto;
           padding: 0 1.25rem;
         }
@@ -166,69 +244,120 @@ export default function ReviewsSection() {
           margin: 0;
         }
 
-        /* Viewport clips overflow */
-        .rv-viewport { overflow: hidden; }
+        /* Viewport */
+        .rv-viewport {
+          overflow: hidden;
+          position: relative;
+          border-radius: 16px;
+          /* Prevent text selection while dragging */
+          user-select: none;
+          -webkit-user-select: none;
+        }
+        .rv-viewport--dragging {
+          cursor: grabbing;
+        }
+        .rv-viewport:not(.rv-viewport--dragging) {
+          cursor: grab;
+        }
+        /* On touch devices, default cursor */
+        @media (hover: none) {
+          .rv-viewport, .rv-viewport--dragging { cursor: default; }
+        }
 
-        /* Track slides horizontally */
+        /* Track */
         .rv-track {
           display: flex;
-          gap: ${GAP}px;
           transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
           will-change: transform;
+          /* Disable pointer events on children during drag to avoid interference */
+        }
+        .rv-viewport--dragging .rv-track {
+          pointer-events: none;
         }
 
-        /* Cards — width driven by JS but need a floor */
+        /* Card */
         .rv-card {
           flex: 0 0 100%;
+          width: 100%;
           background: rgba(255,255,255,0.07);
           border: 1px solid rgba(255,255,255,0.10);
-          border-radius: 12px;
-          padding: 1.5rem;
+          border-radius: 16px;
+          padding: 2rem;
           box-sizing: border-box;
         }
-        @media (min-width: 640px)  { .rv-card { flex: 0 0 calc(50% - ${GAP / 2}px); } }
-        @media (min-width: 1024px) { .rv-card { flex: 0 0 calc(33.333% - ${Math.round(GAP * 2 / 3)}px); } }
+        @media (min-width: 768px) { .rv-card { padding: 2.5rem; } }
 
+        /* Stars + Google logo row */
+        .rv-card__top {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 1rem;
+        }
         .rv-card__stars {
           color: #f0c040;
-          font-size: 0.9375rem;
-          letter-spacing: 0.05em;
-          margin-bottom: 0.75rem;
+          font-size: 1.0625rem;
+          letter-spacing: 0.06em;
+        }
+        .rv-card__google {
+          display: flex;
+          align-items: center;
+          gap: 0.375rem;
+          color: rgba(255,255,255,0.50);
+          font-size: 0.75rem;
+          font-weight: 500;
+          letter-spacing: 0.02em;
         }
         .rv-card__text {
-          color: rgba(255,255,255,0.82);
+          color: rgba(255,255,255,0.85);
           font-family: var(--font-display);
           font-style: italic;
-          font-size: 0.9375rem;
-          line-height: 1.70;
-          margin-bottom: 1.25rem;
+          font-size: clamp(1rem, 2vw, 1.125rem);
+          line-height: 1.72;
+          margin: 0 0 1.5rem;
+          /* Prevent text drag interfering with carousel drag */
+          pointer-events: none;
         }
         .rv-card__author {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
+          gap: 0.875rem;
         }
         .rv-card__flag {
-          width: 36px;
-          height: 36px;
+          width: 42px;
+          height: 42px;
           border-radius: 50%;
-          background: rgba(255,255,255,0.10);
+          background: rgba(255,255,255,0.12);
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 1rem;
+          font-size: 1.25rem;
           flex-shrink: 0;
         }
-        .rv-card__name {
-          color: #fff;
-          font-size: 0.9375rem;
-          font-weight: 600;
-          line-height: 1.3;
+        .rv-card__name { color: #fff; font-size: 1rem; font-weight: 600; }
+        .rv-card__from { color: rgba(255,255,255,0.55); font-size: 0.875rem; margin-top: 0.125rem; }
+
+        /* Drag hint — desktop only, fades after first card */
+        .rv-drag-hint {
+          position: absolute;
+          bottom: 1rem;
+          right: 1.25rem;
+          display: flex;
+          align-items: center;
+          gap: 0.375rem;
+          font-size: 0.75rem;
+          color: rgba(255,255,255,0.35);
+          pointer-events: none;
+          animation: hintFade 3s ease 1.5s forwards;
+          opacity: 0;
         }
-        .rv-card__from {
-          color: rgba(255,255,255,0.55);
-          font-size: 0.8125rem;
+        @keyframes hintFade {
+          0%   { opacity: 0; transform: translateX(4px); }
+          20%  { opacity: 1; transform: translateX(0); }
+          80%  { opacity: 1; }
+          100% { opacity: 0; }
         }
+        @media (hover: none) { .rv-drag-hint { display: none; } }
 
         /* Dots */
         .rv-dots {
@@ -241,12 +370,11 @@ export default function ReviewsSection() {
           width: 8px;
           height: 8px;
           border-radius: 50%;
-          background: rgba(255,255,255,0.22);
+          background: rgba(255,255,255,0.25);
           border: none;
           padding: 0;
           cursor: pointer;
-          transition: background 0.2s ease, transform 0.2s ease;
-          /* expand touch target */
+          transition: background 0.2s ease, transform 0.2s ease, width 0.25s ease;
           position: relative;
         }
         .rv-dot::before {
@@ -256,7 +384,17 @@ export default function ReviewsSection() {
         }
         .rv-dot--active {
           background: #D4611A;
-          transform: scale(1.4);
+          transform: scale(1.2);
+          width: 24px;
+          border-radius: 4px;
+        }
+
+        /* Counter */
+        .rv-counter {
+          text-align: center;
+          margin-top: 0.875rem;
+          font-size: 0.8125rem;
+          color: rgba(255,255,255,0.35);
         }
       `}</style>
     </section>

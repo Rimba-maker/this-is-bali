@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
 import { motion } from 'framer-motion'
+import GoogleIcon from '@/components/icons/GoogleIcon'
 
 export default function HeroSection() {
   return (
@@ -18,15 +18,23 @@ export default function HeroSection() {
         background: '#0A0A0A',
       }}
     >
-      {/* Background photo — warm café at night through foliage */}
-      <Image
-        src="https://images.unsplash.com/photo-1776378147907-1600a9821e0b?w=1600&h=900&fit=crop&auto=format&q=80"
-        alt="THIS IS BALI restaurant atmosphere"
-        fill
-        priority
-        style={{ objectFit: 'cover', opacity: 0.55 }}
-        sizes="100vw"
-      />
+      {/* Hero video background */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          opacity: 0.75,
+        }}
+      >
+        <source src="/videos/hero.mp4" type="video/mp4" />
+      </video>
 
       {/* Overlay */}
       <div
@@ -95,8 +103,8 @@ export default function HeroSection() {
             margin: '0 auto 2rem',
           }}
         >
-          Visit THIS IS BALI and experience award-winning authentic Balinese food
-          and desserts in the heart of Ubud.
+          Authentic Balinese cuisine, crafted without MSG, served in one of Ubud&apos;s
+          most beautiful spaces. Your best meal in Bali starts here.
         </p>
 
         <div
@@ -147,12 +155,13 @@ export default function HeroSection() {
 
         <div className="hero-badges">
           <div className="hero-badge">
+            <GoogleIcon size={16} />
             <span style={{ color: '#f0c040', letterSpacing: '0.04em', fontSize: '0.8125rem' }}>★★★★★</span>
             <strong style={{ fontWeight: 700, fontSize: '0.9375rem' }}>4.9</strong>
             <span style={{ color: 'rgba(255,255,255,0.60)', fontSize: '0.8125rem' }}>· 15,000+ Reviews</span>
           </div>
           <div className="hero-badge">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.92 1.1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.92 1.1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
             <span style={{ fontSize: '0.875rem' }}>AirAsia Partner</span>
           </div>
         </div>

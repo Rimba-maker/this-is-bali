@@ -17,7 +17,7 @@ export default function StepPartySize({ onNext, onBack }: { onNext: () => void; 
   return (
     <div>
       <h2 style={heading}>How many guests?</h2>
-      <p style={sub}>Select the number of people in your party.</p>
+      <p style={sub}>We&apos;ll set the perfect table for your group.</p>
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.625rem', marginBottom: '1.5rem' }}>
         {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (

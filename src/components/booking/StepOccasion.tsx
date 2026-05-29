@@ -25,7 +25,7 @@ export default function StepOccasion({ onNext, onBack }: { onNext: () => void; o
   return (
     <div>
       <h2 style={heading}>Any special occasion? <span style={{ fontWeight: 400, fontSize: '1.25rem' }}>(optional)</span></h2>
-      <p style={sub}>Let us know so we can make your visit extra memorable.</p>
+      <p style={sub}>Let us know and we&apos;ll add a special touch to your visit.</p>
 
       {/* Chips */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.625rem', marginBottom: '2rem' }}>

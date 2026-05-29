@@ -16,7 +16,7 @@ export default function StepDatetime({ onNext }: { onNext: () => void }) {
   return (
     <div>
       <h2 style={heading}>When would you like to visit?</h2>
-      <p style={sub}>Pick a date and your preferred dining time.</p>
+      <p style={sub}>Choose from lunch or dinner — we&apos;ll hold your spot.</p>
 
       {/* Date picker */}
       <div style={{ marginBottom: '2rem' }}>

@@ -7,25 +7,25 @@ const CARDS = [
   {
     src: 'https://images.unsplash.com/photo-1775476784484-cd4f5a5101b5?w=800&h=600&fit=crop&auto=format&q=80',
     alt: 'Tropical restaurant dining area with lush greenery',
-    title: 'Unique Ambience',
-    body: 'A Japandi tropical fusion interior — raw timber, lush greenery, and open sky. Every corner is designed to slow you down and make you stay a little longer.',
-    cta: 'Explore the space',
+    title: 'A Space Unlike Any Other',
+    body: 'Raw timber, lush greenery, open sky — and tables that float above the valley. Our Japandi tropical interior slows you down the moment you arrive.',
+    cta: 'See the interior',
     href: '#about',
   },
   {
     src: 'https://images.unsplash.com/photo-1778053790481-b3ba188adec6?w=800&h=600&fit=crop&auto=format&q=80',
     alt: 'Woven pendant lights hang from a leafy ceiling in restaurant',
-    title: 'Award-Winning Service',
-    body: "Heartfelt hospitality rooted in Balinese tradition. Our team doesn't just serve — they make every visit feel like you're the only guest in the room.",
-    cta: 'Meet the team',
+    title: 'Service That Stays With You',
+    body: "Hospitality rooted in Balinese tradition. Our team doesn't just serve — they make every guest feel like the only one in the room.",
+    cta: 'Read our story',
     href: '#about',
   },
   {
     src: 'https://images.unsplash.com/flagged/photo-1561350117-501b4661f8d4?w=800&h=600&fit=crop&auto=format&q=80',
     alt: 'Chef holding fry pan in professional kitchen',
-    title: 'Award-Winning Chefs',
-    body: 'Fresh, MSG-free, and made from scratch every morning. Our chefs bring traditional Balinese recipes to life using the finest local ingredients.',
-    cta: 'View the menu',
+    title: 'Food Made the Right Way',
+    body: 'No MSG. No shortcuts. Every dish is made from scratch each morning using fresh local ingredients and traditional Balinese recipes.',
+    cta: 'Browse the menu',
     href: '#menu',
   },
 ]
@@ -50,7 +50,7 @@ export default function AboutSection() {
         <div className="abt-header">
           <span className="abt-eyebrow">The Experience</span>
           <h2 className="abt-title">Where Bali&apos;s soul meets your table</h2>
-          <p className="abt-subtitle">Three reasons our guests keep coming back — and bringing everyone they love.</p>
+          <p className="abt-subtitle">Three things that turn a first visit into a habit.</p>
         </div>
 
         <div className="abt-grid">
@@ -136,7 +136,7 @@ export default function AboutSection() {
           .abt-grid { grid-template-columns: repeat(3, 1fr); }
         }
 
-        /* Card — entrance animation */
+        /* Card — entrance animation + flex column for equal-height CTA */
         .abt-card {
           background: #fff;
           border-radius: 12px;
@@ -145,6 +145,8 @@ export default function AboutSection() {
           opacity: 0;
           transform: translateY(20px);
           transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.25s ease;
+          display: flex;
+          flex-direction: column;
         }
         .abt-card--visible {
           opacity: 1;
@@ -166,7 +168,13 @@ export default function AboutSection() {
         .abt-card:hover .abt-card__photo {
           transform: scale(1.04);
         }
-        .abt-card__body { padding: 1.375rem; }
+        /* body as flex column — CTA pushed to bottom via margin-top: auto */
+        .abt-card__body {
+          padding: 1.375rem;
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+        }
         .abt-card__title {
           font-family: var(--font-display);
           font-size: 1.125rem;
@@ -179,6 +187,7 @@ export default function AboutSection() {
           font-size: 0.9375rem;
           line-height: 1.65;
           margin: 0 0 1rem;
+          flex: 1;
         }
         .abt-card__cta {
           color: #D4611A;
@@ -187,6 +196,7 @@ export default function AboutSection() {
           display: inline-flex;
           align-items: center;
           gap: 0.25rem;
+          margin-top: auto;
           transition: gap 0.2s ease;
         }
         .abt-card__cta:hover { gap: 0.5rem; }
