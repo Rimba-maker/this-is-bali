@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 
 export default function HeroSection() {
@@ -17,13 +18,14 @@ export default function HeroSection() {
         background: '#0A0A0A',
       }}
     >
-      {/* Video background — replace div with <video autoplay muted loop playsInline poster="/hero-poster.jpg"> */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'linear-gradient(160deg, #201408 0%, #0a0a0a 45%, #1a1005 100%)',
-        }}
+      {/* Background photo — warm café at night through foliage */}
+      <Image
+        src="https://images.unsplash.com/photo-1776378147907-1600a9821e0b?w=1600&h=900&fit=crop&auto=format&q=80"
+        alt="THIS IS BALI restaurant atmosphere"
+        fill
+        priority
+        style={{ objectFit: 'cover', opacity: 0.55 }}
+        sizes="100vw"
       />
 
       {/* Overlay */}
@@ -32,7 +34,7 @@ export default function HeroSection() {
           position: 'absolute',
           inset: 0,
           background:
-            'linear-gradient(to bottom, rgba(0,0,0,0.50) 0%, rgba(0,0,0,0.28) 45%, rgba(0,0,0,0.62) 100%)',
+            'linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.20) 45%, rgba(0,0,0,0.65) 100%)',
         }}
       />
 
@@ -49,7 +51,6 @@ export default function HeroSection() {
           padding: '0 1.5rem',
         }}
       >
-        {/* Eyebrow */}
         <div
           style={{
             display: 'inline-flex',
@@ -71,7 +72,6 @@ export default function HeroSection() {
           <span style={{ color: '#D4611A' }}>●</span> Ubud&apos;s Most Celebrated Table
         </div>
 
-        {/* Headline */}
         <h1
           style={{
             fontFamily: 'var(--font-display)',
@@ -86,7 +86,6 @@ export default function HeroSection() {
           The <em>World&apos;s</em> Best<br />Indonesian Restaurant
         </h1>
 
-        {/* Subheadline */}
         <p
           style={{
             fontSize: 'clamp(0.9375rem, 1.8vw, 1.125rem)',
@@ -100,7 +99,6 @@ export default function HeroSection() {
           and desserts in the heart of Ubud.
         </p>
 
-        {/* CTAs */}
         <div
           style={{
             display: 'flex',
@@ -122,7 +120,6 @@ export default function HeroSection() {
               fontWeight: 600,
               fontSize: '1rem',
               letterSpacing: '-0.01em',
-              transition: 'background 0.2s ease, transform 0.2s ease',
             }}
           >
             Reserve a Table
@@ -142,14 +139,12 @@ export default function HeroSection() {
               fontWeight: 600,
               fontSize: '1rem',
               letterSpacing: '-0.01em',
-              transition: 'background 0.2s ease',
             }}
           >
             Visit Us Now
           </a>
         </div>
 
-        {/* Trust badges */}
         <div
           style={{
             display: 'flex',
@@ -198,7 +193,6 @@ export default function HeroSection() {
         </div>
       </motion.div>
 
-      {/* Scroll indicator */}
       <motion.div
         animate={{ y: [0, 7, 0], opacity: [0.4, 0.7, 0.4] }}
         transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
@@ -219,13 +213,7 @@ export default function HeroSection() {
       >
         <span>Scroll</span>
         <svg width="14" height="18" viewBox="0 0 14 18" fill="none">
-          <path
-            d="M7 1v16M1 11l6 6 6-6"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+          <path d="M7 1v16M1 11l6 6 6-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </motion.div>
     </section>
