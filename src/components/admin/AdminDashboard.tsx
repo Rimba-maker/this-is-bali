@@ -17,16 +17,30 @@ export default function AdminDashboard() {
   const [selected, setSelected]     = useState<Booking | null>(null)
   const [tab, setTab]               = useState<'overview' | 'bookings'>('bookings')
 
+  const [loadError, setLoadError] = useState('')
+
   const load = useCallback(async () => {
     setLoading(true)
-    const params = new URLSearchParams({ limit: '200' })
-    if (date) params.set('date', date)
-    if (statusFilter !== 'all') params.set('status', statusFilter)
-    const res = await fetch(`/api/bookings?${params}`)
-    if (res.status === 401) { router.replace('/admin/login'); return }
-    const json = await res.json()
-    setBookings(json.bookings ?? [])
-    setLoading(false)
+    setLoadError('')
+    try {
+      const params = new URLSearchParams({ limit: '200' })
+      if (date) params.set('date', date)
+      if (statusFilter !== 'all') params.set('status', statusFilter)
+      const res = await fetch(`/api/bookings?${params}`)
+      if (res.status === 401) { router.replace('/admin/login'); return }
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
+        setLoadError(err.error ?? `Error ${res.status}`)
+        setLoading(false)
+        return
+      }
+      const json = await res.json()
+      setBookings(json.bookings ?? [])
+    } catch (e) {
+      setLoadError(e instanceof Error ? e.message : 'Network error — check env vars')
+    } finally {
+      setLoading(false)
+    }
   }, [date, statusFilter, router])
 
   useEffect(() => { load() }, [load])
@@ -206,7 +220,15 @@ export default function AdminDashboard() {
 
             {/* Table */}
             {loading ? (
-              <div style={{ textAlign: 'center', padding: '4rem', color: 'rgba(10,10,10,0.45)' }}>Loading...</div>
+              <div style={{ textAlign: 'center', padding: '4rem', color: 'rgba(10,10,10,0.45)' }}>Loading bookings...</div>
+            ) : loadError ? (
+              <div style={{ textAlign: 'center', padding: '3rem' }}>
+                <p style={{ color: '#c82014', fontWeight: 600, marginBottom: '0.5rem' }}>Failed to load bookings</p>
+                <p style={{ color: 'rgba(10,10,10,0.50)', fontSize: '0.875rem', marginBottom: '1.25rem' }}>{loadError}</p>
+                <button onClick={load} style={{ background: '#D4611A', color: '#fff', border: 'none', borderRadius: 50, padding: '0.5rem 1.25rem', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer' }}>
+                  ↻ Retry
+                </button>
+              </div>
             ) : bookings.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '4rem', color: 'rgba(10,10,10,0.45)' }}>No bookings found for this filter.</div>
             ) : (
