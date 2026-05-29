@@ -12,14 +12,15 @@ export default function AdminDashboard() {
   const router = useRouter()
   const [bookings, setBookings]     = useState<Booking[]>([])
   const [loading, setLoading]       = useState(true)
-  const [date, setDate]             = useState(new Date().toISOString().split('T')[0])
+  const [date, setDate]             = useState('')
   const [statusFilter, setFilter]   = useState<string>('all')
   const [selected, setSelected]     = useState<Booking | null>(null)
   const [tab, setTab]               = useState<'overview' | 'bookings'>('bookings')
 
   const load = useCallback(async () => {
     setLoading(true)
-    const params = new URLSearchParams({ date, limit: '100' })
+    const params = new URLSearchParams({ limit: '200' })
+    if (date) params.set('date', date)
     if (statusFilter !== 'all') params.set('status', statusFilter)
     const res = await fetch(`/api/bookings?${params}`)
     if (res.status === 401) { router.replace('/admin/login'); return }
@@ -166,8 +167,23 @@ export default function AdminDashboard() {
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                style={{ padding: '0.5rem 0.75rem', borderRadius: 8, border: '1.5px solid #EDE8DC', fontSize: '0.9375rem', background: '#fff', color: '#0A0A0A', outline: 'none' }}
+                placeholder="All dates"
+                style={{ padding: '0.5rem 0.75rem', borderRadius: 8, border: '1.5px solid #EDE8DC', fontSize: '0.9375rem', background: '#fff', color: date ? '#0A0A0A' : 'rgba(10,10,10,0.40)', outline: 'none' }}
               />
+              {date && (
+                <button
+                  onClick={() => setDate('')}
+                  style={{ padding: '0.5rem 0.75rem', borderRadius: 8, border: '1.5px solid #EDE8DC', background: '#fff', fontSize: '0.8125rem', fontWeight: 500, cursor: 'pointer', color: 'rgba(10,10,10,0.60)' }}
+                >
+                  ✕ Clear date
+                </button>
+              )}
+              <button
+                onClick={() => setDate(new Date().toISOString().split('T')[0])}
+                style={{ padding: '0.5rem 0.75rem', borderRadius: 8, border: '1.5px solid #EDE8DC', background: date === new Date().toISOString().split('T')[0] ? '#F5F0E8' : '#fff', fontSize: '0.8125rem', fontWeight: 500, cursor: 'pointer' }}
+              >
+                Today
+              </button>
               <select
                 value={statusFilter}
                 onChange={(e) => setFilter(e.target.value)}
