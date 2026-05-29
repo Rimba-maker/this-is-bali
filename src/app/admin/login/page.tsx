@@ -3,8 +3,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-const MAX_ATTEMPTS = 5
-const LOCKOUT_MS   = 15 * 60 * 1000
+const MAX_ATTEMPTS = 10
+const LOCKOUT_MS   = 2 * 60 * 1000
 
 export default function AdminLogin() {
   const router = useRouter()
@@ -105,8 +105,22 @@ export default function AdminLogin() {
         <p style={{ fontSize: '0.875rem', color: 'rgba(10,10,10,0.50)', marginBottom: '2rem' }}>Admin Dashboard</p>
 
         {locked ? (
-          <div style={{ padding: '1rem', background: 'rgba(200,32,20,0.08)', borderRadius: 8, color: '#c82014', fontSize: '0.9375rem' }}>
-            Too many attempts. Try again in {lockLeft} minute{lockLeft !== 1 ? 's' : ''}.
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div style={{ padding: '1rem', background: 'rgba(200,32,20,0.08)', borderRadius: 8, color: '#c82014', fontSize: '0.9375rem', textAlign: 'center' }}>
+              Too many attempts. Try again in {lockLeft} minute{lockLeft !== 1 ? 's' : ''}.
+            </div>
+            <button
+              onClick={() => {
+                localStorage.removeItem('admin_lock_until')
+                localStorage.removeItem('admin_attempts')
+                setLocked(false)
+                setLockLeft(0)
+                setTimeout(() => inputRef.current?.focus(), 100)
+              }}
+              style={{ background: 'none', border: 'none', color: 'rgba(10,10,10,0.45)', fontSize: '0.8125rem', cursor: 'pointer', textDecoration: 'underline', padding: '0.25rem' }}
+            >
+              I know the correct PIN — reset lockout
+            </button>
           </div>
         ) : (
           <>
