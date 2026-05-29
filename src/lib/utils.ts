@@ -5,8 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-ID', {
+export function formatDate(dateStr?: string): string {
+  if (!dateStr) return ''
+  const d = new Date(dateStr)
+  if (Number.isNaN(d.getTime())) return ''
+  return d.toLocaleDateString('en-ID', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -15,8 +18,11 @@ export function formatDate(dateStr: string): string {
 }
 
 // Short format for table cells: "Mon, 15 Jun 2026"
-export function formatDateShort(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-GB', {
+export function formatDateShort(dateStr?: string): string {
+  if (!dateStr) return ''
+  const d = new Date(dateStr)
+  if (Number.isNaN(d.getTime())) return ''
+  return d.toLocaleDateString('en-GB', {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
@@ -24,8 +30,10 @@ export function formatDateShort(dateStr: string): string {
   })
 }
 
-export function formatTime(time: string): string {
+export function formatTime(time?: string): string {
+  if (!time || !time.includes(':')) return ''
   const [h, m] = time.split(':').map(Number)
+  if (Number.isNaN(h) || Number.isNaN(m)) return ''
   const suffix = h >= 12 ? 'PM' : 'AM'
   const hour = h % 12 || 12
   return `${hour}:${m.toString().padStart(2, '0')} ${suffix}`

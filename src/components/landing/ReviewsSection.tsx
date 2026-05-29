@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import GoogleIcon from '@/components/icons/GoogleIcon'
+import Reveal from './Reveal'
 
 const REVIEWS = [
   {
@@ -36,7 +37,7 @@ const REVIEWS = [
   },
 ]
 
-const SWIPE_THRESHOLD = 50 // px — minimum drag to trigger slide
+const SWIPE_THRESHOLD = 35 // px — minimum drag to trigger slide
 
 export default function ReviewsSection() {
   const [current, setCurrent]     = useState(0)
@@ -46,8 +47,10 @@ export default function ReviewsSection() {
   const trackRef   = useRef<HTMLDivElement>(null)
   const wrapRef    = useRef<HTMLDivElement>(null)
   const timerRef   = useRef<ReturnType<typeof setInterval> | null>(null)
-  const startXRef  = useRef(0)
-  const isDragging = useRef(false)
+  const startXRef      = useRef(0)
+  const startYRef      = useRef(0)
+  const isDragging     = useRef(false)
+  const intentLocked   = useRef<'horizontal' | 'vertical' | null>(null)
 
   // Base transform for current slide
   const baseOffset = useCallback((idx: number) => {
@@ -97,27 +100,45 @@ export default function ReviewsSection() {
   // ── Pointer events (handles both mouse drag + touch swipe) ──
 
   const onPointerDown = useCallback((e: React.PointerEvent) => {
-    // Ignore right-click
     if (e.button === 2) return
     stopTimer()
     isDragging.current = true
+    intentLocked.current = null
     startXRef.current = e.clientX
-    setDragging(true)
+    startYRef.current = e.clientY
+    setDragging(false) // don't show drag cursor until intent confirmed
     setDragDelta(0)
-    ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
   }, [stopTimer])
 
   const onPointerMove = useCallback((e: React.PointerEvent) => {
     if (!isDragging.current) return
-    const delta = e.clientX - startXRef.current
-    setDragDelta(delta)
-    // Real-time drag: no transition, offset = base + delta
-    applyTransform(baseOffset(current) + delta, false)
+    const dx = e.clientX - startXRef.current
+    const dy = e.clientY - startYRef.current
+
+    // Lock intent on first significant movement
+    if (!intentLocked.current) {
+      if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return // too small to judge
+      intentLocked.current = Math.abs(dx) > Math.abs(dy) ? 'horizontal' : 'vertical'
+    }
+
+    // Vertical scroll — let browser handle, abort drag
+    if (intentLocked.current === 'vertical') {
+      isDragging.current = false
+      applyTransform(baseOffset(current), true)
+      return
+    }
+
+    // Horizontal swipe — take over
+    setDragging(true)
+    ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
+    setDragDelta(dx)
+    applyTransform(baseOffset(current) + dx, false)
   }, [applyTransform, baseOffset, current])
 
   const onPointerUp = useCallback((e: React.PointerEvent) => {
-    if (!isDragging.current) return
+    if (!isDragging.current) { startTimer(); return }
     isDragging.current = false
+    intentLocked.current = null
     setDragging(false)
 
     const delta = e.clientX - startXRef.current
@@ -129,7 +150,6 @@ export default function ReviewsSection() {
         : Math.max(current - 1, 0)
       slideTo(next)
     } else {
-      // Snap back to current
       applyTransform(baseOffset(current), true)
     }
     startTimer()
@@ -139,10 +159,10 @@ export default function ReviewsSection() {
     <section id="reviews" className="rv-section">
       <div className="rv-container">
         {/* Header */}
-        <div className="rv-header">
+        <Reveal className="rv-header">
           <span className="rv-eyebrow">What Guests Say</span>
           <h2 className="rv-title">15,000 reasons to visit</h2>
-        </div>
+        </Reveal>
 
         {/* Carousel */}
         <div
@@ -249,9 +269,10 @@ export default function ReviewsSection() {
           overflow: hidden;
           position: relative;
           border-radius: 16px;
-          /* Prevent text selection while dragging */
           user-select: none;
           -webkit-user-select: none;
+          /* KEY: allow vertical scroll but let JS handle horizontal swipe */
+          touch-action: pan-y;
         }
         .rv-viewport--dragging {
           cursor: grabbing;
@@ -259,7 +280,6 @@ export default function ReviewsSection() {
         .rv-viewport:not(.rv-viewport--dragging) {
           cursor: grab;
         }
-        /* On touch devices, default cursor */
         @media (hover: none) {
           .rv-viewport, .rv-viewport--dragging { cursor: default; }
         }

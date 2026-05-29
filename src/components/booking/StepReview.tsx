@@ -36,8 +36,9 @@ export default function StepReview({ onBack }: { onBack: () => void }) {
       })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error ?? 'Something went wrong')
-      reset()
+      // Navigate first, then reset — avoids re-rendering this step with empty data
       router.push(`/booking/confirmation?id=${json.booking.id}&ref=${json.booking.reference}`)
+      setTimeout(() => reset(), 300)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to submit booking. Please try again.')
       setLoading(false)

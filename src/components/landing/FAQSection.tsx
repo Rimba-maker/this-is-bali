@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import Reveal from './Reveal'
 
 const FAQS = [
   {
@@ -49,45 +51,58 @@ export default function FAQSection() {
   return (
     <section className="faq-section">
       <div className="faq-container">
-        <div className="faq-header">
+        <Reveal className="faq-header">
           <span className="faq-eyebrow">Before You Visit</span>
           <h2 className="faq-title">Common Questions</h2>
           <p className="faq-subtitle">
             Quick answers so you can plan your visit with confidence.
           </p>
-        </div>
+        </Reveal>
 
         <div className="faq-list">
-          {FAQS.map((faq, i) => (
-            <div key={i} className={`faq-item${open === i ? ' faq-item--open' : ''}`}>
-              <button
-                className="faq-question"
-                onClick={() => toggle(i)}
-                aria-expanded={open === i}
-                aria-controls={`faq-answer-${i}`}
-              >
-                <span>{faq.q}</span>
-                <span className="faq-icon" aria-hidden="true">
-                  {open === i ? (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4611A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M5 12h14"/>
-                    </svg>
-                  ) : (
+          {FAQS.map((faq, i) => {
+            const isOpen = open === i
+            return (
+              <div key={i} className={`faq-item${isOpen ? ' faq-item--open' : ''}`}>
+                <button
+                  className="faq-question"
+                  onClick={() => toggle(i)}
+                  aria-expanded={isOpen}
+                  aria-controls={`faq-answer-${i}`}
+                >
+                  <span>{faq.q}</span>
+                  <motion.span
+                    className="faq-icon"
+                    aria-hidden="true"
+                    animate={{ rotate: isOpen ? 135 : 0 }}
+                    transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4611A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 5v14M5 12h14"/>
                     </svg>
+                  </motion.span>
+                </button>
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      id={`faq-answer-${i}`}
+                      className="faq-answer"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{
+                        height: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] },
+                        opacity: { duration: 0.2, ease: 'easeOut' },
+                      }}
+                      style={{ overflow: 'hidden' }}
+                    >
+                      <p>{faq.a}</p>
+                    </motion.div>
                   )}
-                </span>
-              </button>
-              <div
-                id={`faq-answer-${i}`}
-                className="faq-answer"
-                style={{ maxHeight: open === i ? '400px' : '0' }}
-              >
-                <p>{faq.a}</p>
+                </AnimatePresence>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
         <p className="faq-footer-note">
@@ -183,10 +198,6 @@ export default function FAQSection() {
         }
         .faq-item--open .faq-icon { background: rgba(212,97,26,0.14); }
 
-        .faq-answer {
-          overflow: hidden;
-          transition: max-height 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
         .faq-answer p {
           padding: 0 0 1.25rem;
           color: rgba(10,10,10,0.62);

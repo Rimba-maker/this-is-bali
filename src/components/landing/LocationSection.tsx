@@ -1,3 +1,5 @@
+import Reveal from './Reveal'
+
 function PinIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4611A" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -33,8 +35,10 @@ export default function LocationSection() {
         <div className="loc-grid">
           {/* Info */}
           <div>
-            <span className="loc-eyebrow">Find Us</span>
-            <h2 className="loc-title">In the heart of Ubud</h2>
+            <Reveal>
+              <span className="loc-eyebrow">Find Us</span>
+              <h2 className="loc-title">In the heart of Ubud</h2>
+            </Reveal>
 
             <div className="loc-items">
               {ITEMS.map(({ Icon, label, text, note }) => (

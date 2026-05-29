@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import Image from 'next/image'
+import Reveal from './Reveal'
 
 const CARDS = [
   {
@@ -47,11 +48,11 @@ export default function AboutSection() {
   return (
     <section id="about" className="abt-section">
       <div className="abt-container">
-        <div className="abt-header">
+        <Reveal className="abt-header">
           <span className="abt-eyebrow">The Experience</span>
           <h2 className="abt-title">Where Bali&apos;s soul meets your table</h2>
           <p className="abt-subtitle">Three things that turn a first visit into a habit.</p>
-        </div>
+        </Reveal>
 
         <div className="abt-grid">
           {CARDS.map((card, i) => (
