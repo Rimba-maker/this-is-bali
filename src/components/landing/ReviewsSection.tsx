@@ -35,43 +35,44 @@ const REVIEWS = [
   },
 ]
 
+const GAP = 16 // px — matches CSS gap below
+
+function getVisible() {
+  if (typeof window === 'undefined') return 1
+  if (window.innerWidth >= 1024) return 3
+  if (window.innerWidth >= 640)  return 2
+  return 1
+}
+
 export default function ReviewsSection() {
   const [current, setCurrent] = useState(0)
-  const trackRef = useRef<HTMLDivElement>(null)
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const trackRef   = useRef<HTMLDivElement>(null)
+  const wrapRef    = useRef<HTMLDivElement>(null)
+  const timerRef   = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  const getVisible = () => {
-    if (typeof window === 'undefined') return 1
-    if (window.innerWidth >= 1024) return 3
-    if (window.innerWidth >= 768) return 2
-    return 1
-  }
-
-  const goTo = useCallback((idx: number) => {
-    const vis = getVisible()
-    const max = Math.max(0, REVIEWS.length - vis)
-    const next = Math.max(0, Math.min(idx, max))
+  const slideTo = useCallback((idx: number) => {
+    if (!trackRef.current || !wrapRef.current) return
+    const vis     = getVisible()
+    const max     = Math.max(0, REVIEWS.length - vis)
+    const next    = Math.max(0, Math.min(idx, max))
+    const wrapW   = wrapRef.current.offsetWidth
+    const cardW   = (wrapW - GAP * (vis - 1)) / vis
+    const offset  = next * (cardW + GAP)
+    trackRef.current.style.transform = `translateX(${-offset}px)`
     setCurrent(next)
-    if (trackRef.current) {
-      const w = trackRef.current.parentElement!.offsetWidth / vis
-      trackRef.current.style.transform = `translateX(${-next * w}px)`
-    }
   }, [])
 
   const startTimer = useCallback(() => {
     timerRef.current = setInterval(() => {
-      setCurrent((c) => {
-        const vis = getVisible()
-        const max = Math.max(0, REVIEWS.length - vis)
+      setCurrent(c => {
+        const vis  = getVisible()
+        const max  = Math.max(0, REVIEWS.length - vis)
         const next = c >= max ? 0 : c + 1
-        if (trackRef.current) {
-          const w = trackRef.current.parentElement!.offsetWidth / vis
-          trackRef.current.style.transform = `translateX(${-next * w}px)`
-        }
+        slideTo(next)
         return next
       })
     }, 5000)
-  }, [])
+  }, [slideTo])
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current)
@@ -79,104 +80,37 @@ export default function ReviewsSection() {
 
   useEffect(() => {
     startTimer()
-    const onResize = () => goTo(0)
+    const onResize = () => { slideTo(0) }
     window.addEventListener('resize', onResize, { passive: true })
-    return () => {
-      stopTimer()
-      window.removeEventListener('resize', onResize)
-    }
-  }, [goTo, startTimer, stopTimer])
+    return () => { stopTimer(); window.removeEventListener('resize', onResize) }
+  }, [slideTo, startTimer, stopTimer])
 
   return (
-    <section id="reviews" style={{ background: '#2D4A2D', padding: '6rem 0', overflow: 'hidden' }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 1.5rem' }}>
+    <section id="reviews" className="rv-section">
+      <div className="rv-container">
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <span
-            style={{
-              display: 'inline-block',
-              fontSize: '0.8125rem',
-              fontWeight: 600,
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.55)',
-              marginBottom: '0.75rem',
-            }}
-          >
-            What Guests Say
-          </span>
-          <h2
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(1.75rem, 3.5vw, 2.625rem)',
-              fontWeight: 600,
-              color: '#fff',
-            }}
-          >
-            15,000 reasons to visit
-          </h2>
+        <div className="rv-header">
+          <span className="rv-eyebrow">What Guests Say</span>
+          <h2 className="rv-title">15,000 reasons to visit</h2>
         </div>
 
-        {/* Track */}
+        {/* Carousel */}
         <div
-          style={{ overflow: 'hidden' }}
+          ref={wrapRef}
+          className="rv-viewport"
           onMouseEnter={stopTimer}
           onMouseLeave={startTimer}
         >
-          <div
-            ref={trackRef}
-            style={{
-              display: 'flex',
-              gap: '1.125rem',
-              transition: 'transform 0.48s ease',
-            }}
-          >
-            {REVIEWS.map((r) => (
-              <div
-                key={r.name}
-                className="r-card"
-                style={{
-                  flexShrink: 0,
-                  background: 'rgba(255,255,255,0.07)',
-                  border: '1px solid rgba(255,255,255,0.10)',
-                  borderRadius: 12,
-                  padding: '1.75rem',
-                }}
-              >
-                <div style={{ color: '#f0c040', fontSize: '0.9375rem', letterSpacing: '0.05em', marginBottom: '0.875rem' }}>
-                  ★★★★★
-                </div>
-                <p
-                  style={{
-                    color: 'rgba(255,255,255,0.83)',
-                    fontFamily: 'var(--font-display)',
-                    fontStyle: 'italic',
-                    fontSize: '0.9375rem',
-                    lineHeight: 1.72,
-                    marginBottom: '1.25rem',
-                  }}
-                >
-                  {r.text}
-                </p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <div
-                    style={{
-                      width: 38,
-                      height: 38,
-                      borderRadius: '50%',
-                      background: 'rgba(255,255,255,0.12)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '1.0625rem',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {r.flag}
-                  </div>
+          <div ref={trackRef} className="rv-track">
+            {REVIEWS.map((r, i) => (
+              <div key={r.name} className="rv-card" role="group" aria-label={`Review ${i + 1} of ${REVIEWS.length}`}>
+                <div className="rv-card__stars" aria-label="5 stars">★★★★★</div>
+                <p className="rv-card__text">{r.text}</p>
+                <div className="rv-card__author">
+                  <div className="rv-card__flag" aria-hidden="true">{r.flag}</div>
                   <div>
-                    <div style={{ color: '#fff', fontSize: '0.9375rem', fontWeight: 600 }}>{r.name}</div>
-                    <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.8125rem' }}>{r.from}</div>
+                    <div className="rv-card__name">{r.name}</div>
+                    <div className="rv-card__from">{r.from}</div>
                   </div>
                 </div>
               </div>
@@ -185,37 +119,144 @@ export default function ReviewsSection() {
         </div>
 
         {/* Dots */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: '2rem' }}>
+        <div className="rv-dots" role="tablist" aria-label="Review navigation">
           {REVIEWS.map((_, i) => (
             <button
               key={i}
-              onClick={() => { stopTimer(); goTo(i); startTimer() }}
-              aria-label={`Review ${i + 1}`}
-              style={{
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
-                background: i === current ? '#D4611A' : 'rgba(255,255,255,0.22)',
-                transform: i === current ? 'scale(1.35)' : 'scale(1)',
-                border: 'none',
-                cursor: 'pointer',
-                padding: 0,
-                transition: 'background 0.2s ease, transform 0.2s ease',
-              }}
+              role="tab"
+              aria-selected={i === current}
+              aria-label={`Go to review ${i + 1}`}
+              className={`rv-dot${i === current ? ' rv-dot--active' : ''}`}
+              onClick={() => { stopTimer(); slideTo(i); }}
             />
           ))}
         </div>
       </div>
 
       <style>{`
-        .r-card {
-          width: calc(100% - 0px);
+        .rv-section {
+          background: #2D4A2D;
+          padding: 4rem 0;
+          overflow: hidden;
         }
-        @media (min-width: 768px) {
-          .r-card { width: calc(50% - 0.5625rem); }
+        @media (min-width: 768px) { .rv-section { padding: 6rem 0; } }
+
+        .rv-container {
+          max-width: 1280px;
+          margin: 0 auto;
+          padding: 0 1.25rem;
         }
-        @media (min-width: 1024px) {
-          .r-card { width: calc(33.333% - 0.75rem); }
+        @media (min-width: 768px) { .rv-container { padding: 0 2rem; } }
+
+        .rv-header { text-align: center; margin-bottom: 2.5rem; }
+        .rv-eyebrow {
+          display: inline-block;
+          font-size: 0.75rem;
+          font-weight: 600;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: rgba(255,255,255,0.50);
+          margin-bottom: 0.625rem;
+        }
+        .rv-title {
+          font-family: var(--font-display);
+          font-size: clamp(1.625rem, 3.5vw, 2.5rem);
+          font-weight: 600;
+          color: #fff;
+          margin: 0;
+        }
+
+        /* Viewport clips overflow */
+        .rv-viewport { overflow: hidden; }
+
+        /* Track slides horizontally */
+        .rv-track {
+          display: flex;
+          gap: ${GAP}px;
+          transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          will-change: transform;
+        }
+
+        /* Cards — width driven by JS but need a floor */
+        .rv-card {
+          flex: 0 0 100%;
+          background: rgba(255,255,255,0.07);
+          border: 1px solid rgba(255,255,255,0.10);
+          border-radius: 12px;
+          padding: 1.5rem;
+          box-sizing: border-box;
+        }
+        @media (min-width: 640px)  { .rv-card { flex: 0 0 calc(50% - ${GAP / 2}px); } }
+        @media (min-width: 1024px) { .rv-card { flex: 0 0 calc(33.333% - ${Math.round(GAP * 2 / 3)}px); } }
+
+        .rv-card__stars {
+          color: #f0c040;
+          font-size: 0.9375rem;
+          letter-spacing: 0.05em;
+          margin-bottom: 0.75rem;
+        }
+        .rv-card__text {
+          color: rgba(255,255,255,0.82);
+          font-family: var(--font-display);
+          font-style: italic;
+          font-size: 0.9375rem;
+          line-height: 1.70;
+          margin-bottom: 1.25rem;
+        }
+        .rv-card__author {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+        .rv-card__flag {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.10);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1rem;
+          flex-shrink: 0;
+        }
+        .rv-card__name {
+          color: #fff;
+          font-size: 0.9375rem;
+          font-weight: 600;
+          line-height: 1.3;
+        }
+        .rv-card__from {
+          color: rgba(255,255,255,0.55);
+          font-size: 0.8125rem;
+        }
+
+        /* Dots */
+        .rv-dots {
+          display: flex;
+          justify-content: center;
+          gap: 0.5rem;
+          margin-top: 1.75rem;
+        }
+        .rv-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.22);
+          border: none;
+          padding: 0;
+          cursor: pointer;
+          transition: background 0.2s ease, transform 0.2s ease;
+          /* expand touch target */
+          position: relative;
+        }
+        .rv-dot::before {
+          content: '';
+          position: absolute;
+          inset: -8px;
+        }
+        .rv-dot--active {
+          background: #D4611A;
+          transform: scale(1.4);
         }
       `}</style>
     </section>

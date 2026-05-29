@@ -14,6 +14,16 @@ export function formatDate(dateStr: string): string {
   })
 }
 
+// Short format for table cells: "Mon, 15 Jun 2026"
+export function formatDateShort(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString('en-GB', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
+}
+
 export function formatTime(time: string): string {
   const [h, m] = time.split(':').map(Number)
   const suffix = h >= 12 ? 'PM' : 'AM'

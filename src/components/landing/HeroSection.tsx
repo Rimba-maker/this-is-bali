@@ -145,52 +145,37 @@ export default function HeroSection() {
           </a>
         </div>
 
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '0.875rem',
-            flexWrap: 'wrap',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              background: 'rgba(255,255,255,0.10)',
-              backdropFilter: 'blur(6px)',
-              border: '1px solid rgba(255,255,255,0.14)',
-              borderRadius: 50,
-              padding: '0.5rem 1rem',
-              color: '#fff',
-              fontSize: '0.875rem',
-            }}
-          >
-            <span style={{ color: '#f0c040', letterSpacing: '0.04em' }}>★★★★★</span>
-            <strong style={{ fontWeight: 700, fontSize: '1rem' }}>4.9</strong>
-            <span style={{ color: 'rgba(255,255,255,0.62)', fontSize: '0.8125rem' }}>
-              · 15,000+ Google Reviews
-            </span>
+        <div className="hero-badges">
+          <div className="hero-badge">
+            <span style={{ color: '#f0c040', letterSpacing: '0.04em', fontSize: '0.8125rem' }}>★★★★★</span>
+            <strong style={{ fontWeight: 700, fontSize: '0.9375rem' }}>4.9</strong>
+            <span style={{ color: 'rgba(255,255,255,0.60)', fontSize: '0.8125rem' }}>· 15,000+ Reviews</span>
           </div>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              background: 'rgba(255,255,255,0.10)',
-              backdropFilter: 'blur(6px)',
-              border: '1px solid rgba(255,255,255,0.14)',
-              borderRadius: 50,
-              padding: '0.5rem 1rem',
-              color: 'rgba(255,255,255,0.88)',
-              fontSize: '0.875rem',
-            }}
-          >
-            <span>✈</span>
-            <span>AirAsia Official Partner</span>
+          <div className="hero-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.92 1.1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span style={{ fontSize: '0.875rem' }}>AirAsia Partner</span>
           </div>
         </div>
+
+        <style>{`
+          .hero-badges {
+            display: flex;
+            justify-content: center;
+            gap: 0.625rem;
+            flex-wrap: wrap;
+          }
+          .hero-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            background: rgba(255,255,255,0.10);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 50px;
+            padding: 0.5rem 0.875rem;
+            color: rgba(255,255,255,0.88);
+          }
+        `}</style>
       </motion.div>
 
       <motion.div

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import type { Booking, BookingStatus } from '@/types'
 import StatusBadge from './StatusBadge'
-import { formatDate, formatTime } from '@/lib/utils'
+import { formatDate, formatDateShort, formatTime } from '@/lib/utils'
 
 const STATUSES: BookingStatus[] = ['pending', 'confirmed', 'seated', 'completed', 'cancelled']
 
@@ -215,7 +215,7 @@ export default function AdminDashboard() {
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
                     <thead>
                       <tr style={{ borderBottom: '1px solid #F5F0E8', background: '#FAFAFA' }}>
-                        {['Reference','Time','Name','Party','Seating','Status','Actions'].map((h) => (
+                        {['Reference','Date & Time','Name','Party','Seating','Status','Actions'].map((h) => (
                           <th key={h} style={{ padding: '0.75rem 1rem', textAlign: 'left', fontWeight: 600, fontSize: '0.75rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: 'rgba(10,10,10,0.50)', whiteSpace: 'nowrap' }}>
                             {h}
                           </th>
@@ -231,7 +231,10 @@ export default function AdminDashboard() {
                           onMouseLeave={(e) => (e.currentTarget.style.background = '')}
                         >
                           <td style={{ padding: '0.75rem 1rem', fontWeight: 600, color: '#D4611A', whiteSpace: 'nowrap' }}>{b.reference}</td>
-                          <td style={{ padding: '0.75rem 1rem', whiteSpace: 'nowrap' }}>{formatTime(b.time)}</td>
+                          <td style={{ padding: '0.75rem 1rem', whiteSpace: 'nowrap' }}>
+                            <div style={{ fontWeight: 500 }}>{formatDateShort(b.date)}</div>
+                            <div style={{ color: 'rgba(10,10,10,0.50)', fontSize: '0.8125rem' }}>{formatTime(b.time)}</div>
+                          </td>
                           <td style={{ padding: '0.75rem 1rem' }}>
                             <div style={{ fontWeight: 500 }}>{b.name}</div>
                             <div style={{ color: 'rgba(10,10,10,0.45)', fontSize: '0.8125rem' }}>{b.whatsapp}</div>

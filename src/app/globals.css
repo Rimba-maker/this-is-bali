@@ -42,4 +42,56 @@
     color: inherit;
     text-decoration: none;
   }
+
+  /* Visible focus rings — accessibility */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-orange);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Touch optimization — remove 300ms delay + tap highlight */
+  button, a, [role="button"] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Cursor on all interactive elements */
+  button, [role="button"], select, label {
+    cursor: pointer;
+  }
+
+  /* Skip to content — screen reader + keyboard */
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: 1rem;
+    z-index: 9999;
+    background: var(--color-brand-orange);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 0 0 8px 8px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: top 0.2s ease;
+  }
+  .skip-link:focus {
+    top: 0;
+  }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Smooth image load */
+  img {
+    display: block;
+    max-width: 100%;
+  }
 }

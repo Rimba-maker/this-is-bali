@@ -5,7 +5,7 @@ const DISHES = [
     src: 'https://images.unsplash.com/photo-1680169590313-9a14f3cd8148?w=800&h=1066&fit=crop&auto=format&q=80',
     name: 'Nasi Campur Bali',
     alt: 'Indonesian local delicacy served in small bowls',
-    span: true,
+    tall: true,
   },
   {
     src: 'https://images.unsplash.com/photo-1613653739328-e86ebd77c9c8?w=800&h=600&fit=crop&auto=format&q=80',
@@ -36,100 +36,168 @@ const DISHES = [
 
 export default function FoodGallery() {
   return (
-    <section id="menu" style={{ background: '#FAFAFA', padding: '6rem 0' }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 1.5rem' }}>
-        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <span style={{ display: 'inline-block', fontSize: '0.8125rem', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#D4611A', marginBottom: '0.75rem' }}>
-            Our Food
-          </span>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.75rem, 3.5vw, 2.625rem)', fontWeight: 600, color: '#0A0A0A', marginBottom: '0.875rem' }}>
-            Food that earns its reviews
-          </h2>
-          <p style={{ color: 'rgba(10,10,10,0.56)', fontSize: '1.0625rem' }}>
-            Every dish is a love letter to Bali — plated with precision, remembered forever.
-          </p>
+    <section id="menu" className="gal-section">
+      <div className="gal-container">
+        <div className="gal-header">
+          <span className="gal-eyebrow">Our Food</span>
+          <h2 className="gal-title">Food that earns its reviews</h2>
+          <p className="gal-subtitle">Every dish is a love letter to Bali — plated with precision, remembered forever.</p>
         </div>
 
-        <div className="gallery-grid">
-          {DISHES.map((dish) => (
-            <div key={dish.name} className={`g-item${dish.span ? ' g-span' : ''}`}>
-              <div className={`g-thumb-wrap${dish.span ? ' g-tall' : ''}`}>
+        <div className="gal-grid">
+          {DISHES.map(dish => (
+            <div key={dish.name} className={`gal-item${dish.tall ? ' gal-item--tall' : ''}`}>
+              <div className={`gal-thumb${dish.tall ? ' gal-thumb--tall' : ''}`}>
                 <Image
                   src={dish.src}
                   alt={dish.alt}
                   fill
-                  style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }}
-                  sizes="(max-width: 768px) 50vw, 33vw"
-                  className="g-img"
+                  className="gal-photo"
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                 />
               </div>
-              <div className="g-overlay">
-                <span style={{ color: '#fff', fontSize: '0.9375rem', fontWeight: 600 }}>
-                  {dish.name}
-                </span>
+              <div className="gal-overlay" aria-hidden="true">
+                <span className="gal-dish-name">{dish.name}</span>
               </div>
             </div>
           ))}
         </div>
 
-        <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-          <a
-            href="#"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              background: 'transparent',
-              color: '#D4611A',
-              border: '1.5px solid #D4611A',
-              borderRadius: 50,
-              padding: '0.8125rem 1.875rem',
-              fontWeight: 600,
-              fontSize: '1rem',
-              letterSpacing: '-0.01em',
-            }}
-          >
-            View Full Menu →
-          </a>
+        <div className="gal-cta">
+          <a href="#" className="gal-btn">View Full Menu →</a>
         </div>
       </div>
 
       <style>{`
-        .gallery-grid {
+        .gal-section {
+          background: #FAFAFA;
+          padding: 4rem 0;
+        }
+        @media (min-width: 768px) { .gal-section { padding: 6rem 0; } }
+
+        .gal-container {
+          max-width: 1280px;
+          margin: 0 auto;
+          padding: 0 1.25rem;
+        }
+        @media (min-width: 768px) { .gal-container { padding: 0 2rem; } }
+
+        .gal-header {
+          text-align: center;
+          margin-bottom: 2.5rem;
+        }
+        .gal-eyebrow {
+          display: inline-block;
+          font-size: 0.75rem;
+          font-weight: 600;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: #D4611A;
+          margin-bottom: 0.625rem;
+        }
+        .gal-title {
+          font-family: var(--font-display);
+          font-size: clamp(1.625rem, 3.5vw, 2.5rem);
+          font-weight: 600;
+          color: #0A0A0A;
+          margin: 0 0 0.75rem;
+        }
+        .gal-subtitle {
+          color: rgba(10,10,10,0.55);
+          font-size: 1rem;
+          margin: 0;
+        }
+
+        /* Grid: 2 cols mobile, 3 cols desktop */
+        .gal-grid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
-          gap: 0.625rem;
+          grid-auto-rows: auto;
+          gap: 0.5rem;
         }
         @media (min-width: 768px) {
-          .gallery-grid {
+          .gal-grid {
             grid-template-columns: repeat(3, 1fr);
-            gap: 0.875rem;
+            gap: 0.75rem;
           }
-          .g-span { grid-row: span 2; }
-          .g-span .g-thumb-wrap { aspect-ratio: 3/4; }
+          .gal-item--tall {
+            grid-row: span 2;
+          }
         }
-        .g-item {
+
+        .gal-item {
           position: relative;
           overflow: hidden;
-          border-radius: 12px;
+          border-radius: 10px;
           cursor: pointer;
+          background: #e8dcc8;
         }
-        .g-thumb-wrap {
+
+        /* Base aspect ratio */
+        .gal-thumb {
           position: relative;
           width: 100%;
           aspect-ratio: 4/3;
+          overflow: hidden;
         }
-        .g-item:hover .g-img { transform: scale(1.05); }
-        .g-overlay {
+        /* Tall item: only taller on desktop where row-span works */
+        @media (min-width: 768px) {
+          .gal-thumb--tall {
+            aspect-ratio: unset;
+            position: absolute;
+            inset: 0;
+          }
+          .gal-item--tall {
+            aspect-ratio: unset;
+          }
+        }
+
+        .gal-photo {
+          object-fit: cover;
+          transition: transform 0.45s ease;
+        }
+        .gal-item:hover .gal-photo { transform: scale(1.05); }
+
+        .gal-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(to top, rgba(10,10,10,0.68) 0%, transparent 55%);
+          background: linear-gradient(to top, rgba(10,10,10,0.65) 0%, transparent 50%);
           opacity: 0;
           transition: opacity 0.3s ease;
           display: flex;
           align-items: flex-end;
-          padding: 1rem;
+          padding: 0.875rem;
         }
-        .g-item:hover .g-overlay { opacity: 1; }
+        .gal-item:hover .gal-overlay { opacity: 1; }
+        /* Always show dish name on touch devices */
+        @media (hover: none) {
+          .gal-overlay { opacity: 1; }
+        }
+        .gal-dish-name {
+          color: #fff;
+          font-size: 0.875rem;
+          font-weight: 600;
+          text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+
+        .gal-cta { text-align: center; margin-top: 2rem; }
+        .gal-btn {
+          display: inline-flex;
+          align-items: center;
+          background: transparent;
+          color: #D4611A;
+          border: 1.5px solid #D4611A;
+          border-radius: 50px;
+          padding: 0.75rem 1.75rem;
+          font-weight: 600;
+          font-size: 0.9375rem;
+          letter-spacing: -0.01em;
+          transition: background 0.2s ease, color 0.2s ease;
+        }
+        .gal-btn:hover {
+          background: #D4611A;
+          color: #fff;
+        }
       `}</style>
     </section>
   )
