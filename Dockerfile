@@ -1,32 +1,24 @@
-FROM node:20-slim AS base
+# node:22 — pnpm 11 requires Node >= 22.13
+FROM node:22-slim
+
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
-
-# ── Install dependencies ──
-FROM base AS deps
-WORKDIR /app
-COPY package.json pnpm.yaml ./
-# Fresh install on Linux — resolves correct @tailwindcss/oxide native binding
-RUN pnpm install
-
-# ── Build ──
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+
+# Pin pnpm version — avoid corepack pulling incompatible/newer release
+RUN corepack enable && corepack install -g pnpm@10.11.0
+
+WORKDIR /app
+
+# Copy manifests — fresh install on Linux gets correct @tailwindcss/oxide binding
+COPY package.json pnpm.yaml ./
+RUN pnpm install --no-frozen-lockfile
+
+# Build
+COPY . .
 RUN pnpm build
 
-# ── Runtime ──
-FROM base AS runner
-WORKDIR /app
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/public ./public
 EXPOSE 3000
-ENV PORT=3000
-CMD ["pnpm", "start"]
+ENV NODE_ENV=production
+
+CMD pnpm start
